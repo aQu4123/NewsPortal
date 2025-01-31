@@ -1,0 +1,62 @@
+1. Создать двух пользователей (с помощью метода User.objects.create_user('username')).
+from django.contrib.auth.models import User
+user1 = User.objects.create_user('skill', password='factory')
+user2 = User.objects.create_user('factory', password='skill')
+
+2. Создать два объекта модели Author, связанные с пользователями.
+from news.models import *
+author1 = Author.objects.create(user = user1)
+author2 = Author.objects.create(user = user2)
+
+3. Добавить 4 категории в модель Category.
+cat1 = Category.objects.create(name = 'Музыкальные')
+cat2 = Category.objects.create(name = 'Экономические')
+cat3 = Category.objects.create(name = 'Спортивные')
+cat4 = Category.objects.create(name = 'Социальные')
+
+4. Добавить 2 статьи и 1 новость.
+post1 = Post.objects.create(author = author1, type = "AR", title = 'Музыкальные инструменты', text = 'Классификация: струнные, духовые, язычковые, ударные, перкуссия, клавишные, механические, электромузыкальные')
+post2 = Post.objects.create(author = author2, type = "AR", title = 'Экономика', text = 'Экономика - хозяйственная деятельность, а также совокупность общественных отношений, которые складываются в системе производства, распределения, обмена и потребления товаров и услуг. В результате этой деятельности непрерывно воспроизводятся блага, обеспечивающие жизнедеятельность людей')
+post3 = Post.objects.create(author = author2, type = "NW", title = 'qwerty', text = '123456789')
+
+5. Присвоить им категории (как минимум в одной статье/новости должно быть не меньше 2 категорий).
+post1.category.add(cat1, cat2)
+post1.category.all().values('name')
+post2.category.add(cat2, cat3)
+post3.category.add(cat3)
+
+6. Создать как минимум 4 комментария к разным объектам модели Post (в каждом объекте должен быть как минимум один комментарий).
+comment1 = Comment.objects.create(post = post1, user = user1, comment_text = 'kkkkkk')
+comment2 = Comment.objects.create(post = post2, user = user1, comment_text = 'hhhhhh')
+comment3 = Comment.objects.create(post = post3, user = user2, comment_text = 'nn121bb')
+comment4 = Comment.objects.create(post = post1, user = user2, comment_text = 'kkkvvv222')
+
+7. Применяя функции like() и dislike() к статьям/новостям и комментариям, скорректировать рейтинги этих объектов.
+post1.like()
+post1.like()
+post1.like()
+post2.like()
+post3.dislike()
+post3.like()
+comment1.like()
+comment2.dislike()
+comment2.like()
+comment3.dislike()
+comment4.like()
+comment4.like()
+
+8. Обновить рейтинги пользователей.
+author1.update_rating()
+author2.update_rating()
+
+9. Вывести username и рейтинг лучшего пользователя (применяя сортировку и возвращая поля первого объекта).
+Author.objects.all().order_by('-rating').values('user', 'rating').first()
+
+10. Вывести дату добавления, username автора, рейтинг, заголовок и превью лучшей статьи, основываясь на лайках/дислайках к этой статье.
+Post.objects.filter(type="AR").order_by('-rating').values('author','rating', 'title').first()
+best_article = Post.objects.filter(type="AR").order_by('-rating').first()
+best_article.preview()
+
+11. Вывести все комментарии (дата, пользователь, рейтинг, текст) к этой статье.
+Comment.objects.filter(post = best_article).values('date_in', 'user', 'rating', 'comment_text')
+
