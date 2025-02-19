@@ -48,5 +48,8 @@ Post
            <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
        {% endif %}
    {% endif %}
-
+<hr>
+{% if is_not_authors %}
+<button> <a href="/news/upgrade"> Стать автором!</a> </button>
+{% endif %}
 {% endblock content %}

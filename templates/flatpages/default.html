@@ -36,6 +36,39 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/contacts/">Contact</a>
                         </li>
+
+                        <!--Поиск/Создать новостей для юзеров -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="/news/search/">Search</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/news/create/">Create</a>
+                        </li>
+                        <!--<li class="nav-item">
+                            <button popovertarget="mainpopover" popovertargetaction="toggle">Create</button>
+                            <div id = "mainpopover" popover>
+                                <nav class="listcontainer">
+                                    <a href="/news/create/">News</a>
+                                    <a href="/news/article/create/">Article</a>
+                                </nav>
+                            </div>
+                        </li> -->
+
+                        <!--Войти/Выйти для юзеров -->
+                        {% if request.user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/accounts/logout">Выйти</a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/accounts/login">Войти</a>
+                        </li>
+                        {% endif %}
+                        <!--{% if is_not_authors %}
+                        <li class="nav-item">
+                            <button> <a href="/news/upgrade"> Стать автором!</a> </button>
+                        </li>
+                        {% endif %}        кнопка стать автором на панели сверху -->
                     </ul>
                 </div>
             </div>
