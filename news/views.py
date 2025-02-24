@@ -2,7 +2,7 @@
 # что в этом представлении мы будем выводить список объектов из БД
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from .models import Post
+from .models import Post, Category
 from .filters import PostFilter
 from .forms import PostForm
 from django.urls import reverse_lazy
@@ -105,5 +105,44 @@ def upgrade_me(request):
     authors_group = Group.objects.get(name='authors')
     if not request.user.groups.filter(name='authors').exists():
         authors_group.user_set.add(user)
-    # Author.objects.user
+    # Author.objects.create(user=user)
     return redirect('/news/')
+
+@login_required
+def subscribe(request, pk):
+    user = request.user
+    subscribed = Category.objects.get(pk=pk)
+    if not user.subscribers.filter(pk=pk).exists():
+        subscribed.subscribers.add(user)
+    return redirect(request.META.get('HTTP_REFERER'))
+
+@login_required
+def unsubscribe(request, pk):
+    user = request.user
+    subscribed = Category.objects.get(pk=pk)
+    if user.subscribers.filter(pk=pk).exists():
+        subscribed.subscribers.remove(user)
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+class CategoryList(LoginRequiredMixin, ListView):
+    model = Post
+    ordering = '-date_in'
+    template_name = 'news_category.html'
+    context_object_name = 'news'
+    paginate_by = 10
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.category = None
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        self.category = Category.objects.get(pk=self.kwargs.get('pk'))
+        queryset = queryset.filter(category=self.category)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category'] = self.category
+        return context
