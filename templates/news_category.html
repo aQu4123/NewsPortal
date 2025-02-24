@@ -8,8 +8,14 @@ Post
 {% endblock title %}
 
 {% block content %}
-<h3>Всего новостей: {{ news|length }}</h3>
+<h3>Все новости и статьи в категории: {{ category.name }}</h3>
 
+{% if not category in user.subscribers.all %}
+<button><a class="nav-link" href="{% url 'subscribe' category.id %}">Подписаться</a></button>
+{% else %}
+Вы подписаны.
+<button><a class="nav-link" href="{% url 'unsubscribe' category.id %}">Отписаться</a></button>
+{% endif %}
    <hr>
    {% if news %}
        <table>
@@ -17,7 +23,6 @@ Post
                <td>Заголовок</td>
                <td>Дата публикации</td>
                <td>Содержание</td>
-               <td>Категории</td>
            </tr>
 
            {% for new in news %}
@@ -25,9 +30,6 @@ Post
                <td><a href="{% url 'post_detail' new.id %}">{{ new.title|censor }}</a></td>
                <td>{{ new.date_in|date:'d M Y' }}</td>
                <td>{{ new.text|truncatewords:20|censor }}</td>
-               <td>{% for c in new.category.all %}
-                   <a href="{% url 'news_category' c.id %}">{{ c.name }}</a>
-               {% endfor %}</td>
            </tr>
            {% endfor %}
        </table>

@@ -9,6 +9,12 @@ Post
 {% block content %}
     <h1>{{ new.title|censor }}</h1>
     <hr>
+    <td>Категория:
+        {% for c in new.category.all %}
+        <a href="{% url 'news_category' c.id %}">{{ c.name }}</a>
+        {% endfor %}
+    </td>
+    <hr>
     <h5>Дата публикации: {{ new.date_in }}</h5>
     <h2>{{ new.text|censor }}</h2>
 {% endblock content %}
