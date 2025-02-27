@@ -7,7 +7,7 @@ from .filters import PostFilter
 from .forms import PostForm
 from django.urls import reverse_lazy
 from django.urls import reverse
-
+from .tasks import notify_about_new_post
 
 class PostsList(ListView):
     # Указываем модель, объекты которой мы будем выводить
@@ -75,6 +75,7 @@ class PostCreate(PermissionRequiredMixin, CreateView):
         if self.request.path == reverse('article_create'):
             post.type = "AR"
         post.save()
+        # notify_about_new_post.delay(post.pk)
         return super().form_valid(form)
 
 class PostDelete(DeleteView):
